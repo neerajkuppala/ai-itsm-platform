@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  auth-service:
+    build: ./services/auth-service
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./services/auth-service:/app
+    environment:
+      - DATABASE_URL=sqlite:///./auth.db
+
+  ticket-service:
+    build: ./services/ticket-service
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./services/ticket-service:/app
+    environment:
+      - DATABASE_URL=sqlite:///./tickets.db
+    depends_on:
+      - auth-service
+
+  ai-service:
+    build: ./services/ai-service
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./services/ai-service:/app
+    environment:
+      - AWS_DEFAULT_REGION=us-east-1
+    depends_on:
+      - auth-service
+
+  notification-service:
+    build: ./services/notification-service
+    ports:
+      - "8004:8004"
+    volumes:
+      - ./services/notification-service:/app
+    environment:
+      - AWS_DEFAULT_REGION=us-east-1
+    depends_on:
+      - auth-service
