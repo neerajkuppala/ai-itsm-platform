@@ -1,0 +1,86 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REGISTRY: 137008403814.dkr.ecr.us-east-1.amazonaws.com
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Test Auth Service
+        run: |
+          cd services/auth-service
+          pip install fastapi uvicorn sqlalchemy passlib python-jose python-multipart email-validator
+          python -c "from main import app; print('Auth service OK')"
+
+      - name: Test Ticket Service
+        run: |
+          cd services/ticket-service
+          pip install fastapi uvicorn sqlalchemy python-jose python-multipart
+          python -c "from main import app; print('Ticket service OK')"
+
+      - name: Test AI Service
+        run: |
+          cd services/ai-service
+          pip install fastapi uvicorn boto3 python-jose python-multipart
+          python -c "from main import app; print('AI service OK')"
+
+      - name: Test Notification Service
+        run: |
+          cd services/notification-service
+          pip install fastapi uvicorn boto3 python-jose python-multipart
+          python -c "from main import app; print('Notification service OK')"
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push Auth Service
+        run: |
+          docker build -t $ECR_REGISTRY/ai-itsm-auth-service:latest ./services/auth-service
+          docker push $ECR_REGISTRY/ai-itsm-auth-service:latest
+
+      - name: Build and push Ticket Service
+        run: |
+          docker build -t $ECR_REGISTRY/ai-itsm-ticket-service:latest ./services/ticket-service
+          docker push $ECR_REGISTRY/ai-itsm-ticket-service:latest
+
+      - name: Build and push AI Service
+        run: |
+          docker build -t $ECR_REGISTRY/ai-itsm-ai-service:latest ./services/ai-service
+          docker push $ECR_REGISTRY/ai-itsm-ai-service:latest
+
+      - name: Build and push Notification Service
+        run: |
+          docker build -t $ECR_REGISTRY/ai-itsm-notification-service:latest ./services/notification-service
+          docker push $ECR_REGISTRY/ai-itsm-notification-service:latest
+          
