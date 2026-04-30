@@ -3,7 +3,7 @@
 A cloud-native, microservices-based IT Service Management platform built with Python, React, and AWS — similar to ServiceNow but built from scratch.
 
 ## 🚀 Live Demo
-- Frontend: Running on AWS
+- Frontend: - Frontend: https://main.d1ntzsvf5xrdux.amplifyapp.com
 - Auth Service: FastAPI + JWT
 - Ticket Service: FastAPI + SQLite
 - AI Service: Amazon Bedrock (Claude)
