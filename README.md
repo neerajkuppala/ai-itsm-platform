@@ -3,7 +3,7 @@
 A cloud-native, microservices-based IT Service Management platform built with Python, React, and AWS — similar to ServiceNow but built from scratch.
 
 ## 🚀 Live Demo
-- Frontend: - Frontend: https://main.d1ntzsvf5xrdux.amplifyapp.com
+- Frontend: https://main.d1ntzsvf5xrdux.amplifyapp.com
 - Auth Service: FastAPI + JWT
 - Ticket Service: FastAPI + SQLite
 - AI Service: Amazon Bedrock (Claude)
@@ -95,10 +95,14 @@ GitHub Actions automatically:
 3. Pushes to AWS ECR
 
 ## 📊 API Documentation
-- Auth: http://localhost:8000/docs
-- Tickets: http://localhost:8001/docs
-- AI: http://localhost:8002/docs
-- Notifications: http://localhost:8004/docs
+Each service has auto-generated Swagger docs (run services locally or via Codespaces):
+- Auth: `http://localhost:8000/docs`
+- Tickets: `http://localhost:8001/docs`
+- AI: `http://localhost:8002/docs`
+- Notifications: `http://localhost:8004/docs`
+
+## 🌐 Live Demo
+- Frontend: https://main.d1ntzsvf5xrdux.amplifyapp.com
 
 ## 👨‍💻 Author
 Neeraj Kuppala
